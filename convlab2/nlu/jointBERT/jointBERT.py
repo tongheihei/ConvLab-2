@@ -6,13 +6,16 @@ from transformers import BertModel
 class JointBERT(nn.Module):
     def __init__(self, model_config, device, slot_dim, intent_dim, intent_weight=None):
         super(JointBERT, self).__init__()
-        self.slot_num_labels = slot_dim
-        self.intent_num_labels = intent_dim
-        self.device = device
+        self.slot_num_labels = slot_dim #一共有多少个槽
+        self.intent_num_labels = intent_dim #一共有多少个意图
+        self.device = device #在cpu还是在GPU
         self.intent_weight = intent_weight if intent_weight is not None else torch.tensor([1.]*intent_dim)
+        #判断意图的权重
 
         print(model_config['pretrained_weights'])
+        #查看当前使用哪个预训练模型
         self.bert = BertModel.from_pretrained(model_config['pretrained_weights'])
+        #导入bert模型
         self.dropout = nn.Dropout(model_config['dropout'])
         self.context = model_config['context']
         self.finetune = model_config['finetune']
